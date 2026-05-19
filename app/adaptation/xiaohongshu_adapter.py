@@ -1,0 +1,1 @@
+from app.adaptation.adaptation_matrix import adapt_chapter
