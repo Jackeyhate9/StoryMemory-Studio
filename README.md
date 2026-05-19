@@ -2,237 +2,224 @@
 
 **中文名：长篇记忆小说**
 
-StoryMemory Studio is a local-first creative control center for long-form fiction and IP development. It combines a structured SQLite story memory database, long-context prompt orchestration, chapter generation, consistency checks, foreshadowing management, style profiling, AI-tone cleanup, and multi-format IP adaptation.
+StoryMemory Studio is a local-first AI writing control center for long-form fiction and IP development. It combines a structured SQLite story memory database, long-context prompt orchestration, chapter generation, consistency checks, foreshadowing management, style profiling, AI-tone cleanup, novelization rewriting, and multi-format IP adaptation.
 
-StoryMemory Studio 是一个本地优先的长篇小说与 IP 创作中控台。它不是“一键写小说”的玩具，而是把 **结构化记忆库 + 长上下文 Prompt 编排 + 章节生成 + 穿帮检测 + 文风学习 + AI 腔治理 + IP 改编** 放进同一个本地工作台。
+StoryMemory Studio 是一个本地优先的长篇小说与 IP 创作中控台。它不是“一键写小说”的玩具，而是把 **SQL 结构化记忆库、DeepSeek 百万 token 长上下文编排、章节生成、穿帮检测、伏笔管理、时间线管理、文风学习、AI 腔治理、小说化重写、IP 改编** 放进同一个可运行桌面工具里。
 
-> Built for web novel authors, short drama writers, comic adaptation creators, and anyone who has ever watched a long story slowly forget its own soul.
+> Built for web novel authors, short drama writers, comic adaptation creators, and anyone who has watched a long story slowly forget its own rules.
 
 > 面向网文作者、短剧编剧、漫画改编创作者，以及所有被“写到后期设定忘光了”折磨过的人。
 
 ---
 
-## Why StoryMemory Studio?
+## Download / 直接下载
 
-Long fiction does not fail because the model cannot write one chapter. It fails because the model forgets.
+Windows release:
 
-It forgets who knows what.  
-It forgets which promise was made in chapter 12.  
-It forgets that a character was injured, that a key changed hands, that a relationship had already broken once.  
-It forgets the tone that made the opening work.
+[Download StoryMemoryStudio.exe](https://github.com/Jackeyhate9/StoryMemory-Studio/releases/download/v0.1.0/StoryMemoryStudio.exe)
+
+Repository:
+
+[https://github.com/Jackeyhate9/StoryMemory-Studio](https://github.com/Jackeyhate9/StoryMemory-Studio)
+
+首次启动可能需要 10-30 秒。双击 exe 后会自动启动本地 Streamlit 界面并打开浏览器。若浏览器没有自动打开，请查看 exe 同级目录下的 `start_log.txt`。
+
+Windows may warn about unsigned PyInstaller executables. This is expected for an unsigned MVP build. The app stores user data locally in `data/` and exports files to `exports/`.
+
+---
+
+## Interface Preview / 界面预览
+
+> The screenshots below are UI previews generated from the current Streamlit layout. Actual project data depends on your local database.
+
+![StoryMemory Studio Dashboard](docs/screenshots/dashboard.png)
+
+![Context Builder for Long Context](docs/screenshots/context-builder.png)
+
+![AI Tone Detector and Novelization Tools](docs/screenshots/ai-tone-detector.png)
+
+---
+
+## Why This Exists / 为什么需要它
+
+Long fiction does not fail because an AI model cannot write one chapter. It fails because the system forgets:
+
+- who knows which secret;
+- which foreshadow was planted in chapter 12;
+- whether a character was injured, missing, promoted, betrayed, or already reconciled;
+- which rules must never be broken;
+- what made the opening style work.
+
+长篇创作的真正难点不是“写一章”，而是“写到第 50 章、第 100 章还能稳住”：
+
+- 人物知道不该知道的信息；
+- 伏笔埋了就再也没回收；
+- 时间线、伤势、地点移动互相打架；
+- 世界观规则前后矛盾；
+- 文风越写越飘；
+- 模型开始使用模板化总结句和 AI 腔结尾。
 
 StoryMemory Studio treats memory as a first-class writing system:
 
-- **SQLite is the source of truth** for facts, characters, relationships, rules, foreshadows, timelines, and logs.
-- **Long-context LLMs are used deliberately**, not by dumping the whole novel into the prompt.
-- **Context Builder ranks memory by priority**, so the next chapter sees what matters most.
-- **Every generation is traceable**, reviewable, editable, and exportable.
-
-长篇创作的问题通常不是模型写不出一章，而是它会忘。
-
-它会忘记谁知道什么。  
-它会忘记第 12 章埋过什么承诺。  
-它会忘记某个角色受过伤、某把钥匙换过主人、某段关系已经裂过一次。  
-它也会忘记开篇真正好看的那种语气。
-
-StoryMemory Studio 把“记忆”当成创作系统的核心：
-
-- **SQLite 是事实来源**：人物、关系、世界观规则、伏笔、时间线、章节事实都结构化保存。
-- **长上下文能力谨慎使用**：不把全文粗暴塞进 Prompt，而是按优先级组织。
-- **Context Builder 自动排序召回**：让下一章优先命中关键设定、人物、伏笔和前文事实。
-- **所有生成都有日志**：可追踪、可编辑、可回滚、可导出。
+- SQLite is the source of truth for facts, characters, relationships, rules, foreshadows, timelines, and logs.
+- Long-context models are used deliberately, not by dumping the whole novel into the prompt.
+- Context Builder ranks memory by priority, so the next chapter sees what matters most.
+- Every generation is traceable, reviewable, editable, and exportable.
 
 ---
 
-## Highlights / 核心亮点
+## DeepSeek Million-Token Strategy / DeepSeek 百万 Token 长上下文适配
 
-- **Local-first data safety**  
-  Your projects, database, exports, and configuration live on your own machine.
+StoryMemory Studio is designed for long-context models such as DeepSeek, but it does **not** simply paste the entire novel into the prompt.
 
-- **Story Memory Engine**  
-  Maintains structured long-term memory for characters, facts, foreshadows, rules, timelines, unresolved questions, and style profiles.
+DeepSeek 的长上下文能力非常适合做全局理解、长线一致性审查、伏笔回收和风格保持。但长上下文不等于“把全文粗暴塞进去”。StoryMemory Studio 采用 **SQL 结构化记忆库 + 分层 Prompt 编排**：
 
-- **DeepSeek / OpenAI-compatible / Ollama support**  
-  Use cloud APIs or local Ollama models. The default release flow prefers local Ollama when available.
+### Context Priority Layers / 上下文优先级
 
-- **Context Builder for long-context models**  
-  Supports `lite 32k`, `standard 128k`, `deepseek_long 800k`, and `full_audit 1M` budget modes.
+**Priority S: Current-task critical memory / 当前任务强相关**
 
-- **Create Novel Wizard**  
-  Start from zero with a premise and generate a project Bible, character cards, world rules, foreshadows, timelines, first volume outline, first 10 chapter outlines, and first chapter draft.
+- current chapter goal and outline;
+- full character cards for appearing characters;
+- current location, factions, props, abilities;
+- active foreshadows;
+- previous chapter full text or detailed summary;
+- recent 3-5 chapter summaries;
+- current volume outline.
 
-- **Style Profiler**  
-  Learn abstract style parameters from pasted or uploaded samples without copying protected text.
+**优先级 S：当前章节目标、章纲、出场人物完整人物卡、当前地点、相关伏笔、上一章全文或摘要、最近 3-5 章摘要、当前卷大纲。**
 
-- **humanizer-zh built in**  
-  Cleans model traces, template sentences, vague summaries, `<think>` remnants, and obvious AI-flavored prose after generation.
+**Priority A: Hard constraints / 必须遵守的硬设定**
 
-- **Novelization Rewriter**  
-  Converts “setting explanation chapters” into more scene-driven fiction with action, subtext, friction, objects, and concrete hooks.
+- world rules;
+- ability system rules;
+- forbidden contradictions;
+- confirmed facts;
+- key timeline nodes;
+- character invariants.
 
-- **AI Tone Detector**  
-  Separates real AI artifacts from acceptable light-novel expression and recommends local sentence fixes, paragraph rewriting, or full chapter polishing.
+**优先级 A：世界观硬规则、能力体系、时间线关键节点、人物不可违背设定、已确认事实、禁止出现的矛盾。**
 
-- **IP Adaptation Matrix**  
-  Adapt chapters into comic storyboards, short drama scripts, video storyboards, Xiaohongshu posts, poster prompts, character cards, quotes, and teaser copy.
+**Priority B: Long-arc support / 长线辅助信息**
 
-中文简述：
+- main plot and side plot summaries;
+- unresolved questions;
+- relationship changes;
+- item states;
+- faction balance.
 
-- 本地优先，数据默认保存在本机。
-- 结构化维护人物、关系、伏笔、章节事实、时间线、世界观规则。
-- 支持 DeepSeek、OpenAI-compatible 和 Ollama 本地模型。
-- 针对百万 token 长上下文做分层 Prompt 编排。
-- 支持从 0 创建小说项目。
-- 支持导入已有作品并抽取长期记忆。
-- 支持文风学习，但只提取抽象风格画像，不复制原文。
-- 内置 `humanizer-zh`，生成后自动降低 AI 腔。
-- 支持小说化重写，让章节从“设定说明”变成“场景推动”。
-- 支持漫画、短剧、小红书、海报提示词等 IP 改编输出。
+**优先级 B：主线、支线、未解决问题、人物关系变化、道具状态、势力格局。**
 
----
+**Priority C: Style and platform adaptation / 风格与平台适配**
 
-## Feature Map / 功能地图
+- style profile;
+- pacing and dialogue style;
+- target platform rules;
+- anti-AI-tone constraints;
+- recent AI-tone feedback.
 
-### 1. Creation Launch / 创作启动
+**优先级 C：文风画像、叙事节奏、对话风格、爽点密度、目标平台风格、反 AI 腔规则。**
 
-- Create Novel Wizard / 从 0 创建小说
-- Project Manager / 项目管理
-- Chapter Import / 章节导入
+**Priority D: Compressed archive / 压缩背景信息**
 
-### 2. Memory Hub / 记忆中枢
+- early chapter summary tree;
+- whole-book synopsis;
+- completed story overview;
+- historical archive.
 
-- Memory Dashboard / 记忆库看板
-- Memory Editor / 记忆编辑器
-- Backup and Restore / 备份与恢复
+**优先级 D：早期章节摘要树、全书总纲、已完成剧情概览、历史归档信息。**
 
-### 3. Chapter Writing / 章节创作
+### Token Budget Modes / Token 预算模式
 
-- Chapter Generation / 章节生成
-- Chapter Editing and Export / 章节编辑与导出
-- Style Profiler / 文风学习器
-- Model and Data Settings / 模型与数据设置
+| Mode | Budget | Recommended use |
+| --- | ---: | --- |
+| `lite` | 32k | quick generation, small projects |
+| `standard` | 128k | normal long-form writing |
+| `deepseek_long` | 800k | DeepSeek long-context writing and consistency |
+| `full_audit` | 1M | full-project audit, timeline and foreshadow review |
 
-### 4. Consistency Management / 一致性管理
+| 模式 | 预算 | 用途 |
+| --- | ---: | --- |
+| `lite` | 32k | 快速生成、小项目 |
+| `standard` | 128k | 常规长篇创作 |
+| `deepseek_long` | 800k | DeepSeek 长上下文创作与一致性保持 |
+| `full_audit` | 1M | 全书审计、时间线、伏笔与设定总检查 |
 
-- Consistency Checker / 一致性检查
-- Foreshadow Manager / 伏笔管理
-- Timeline Manager / 时间线管理
-- Character Arc Tracker / 人物弧光追踪
+### Why This Improves Recall / 为什么更容易命中关键设定
 
-### 5. Quality Optimization / 质量优化
+The goal is not to claim perfect recall. The goal is to increase the probability that the model sees the right fact at the right time.
 
-- AI Tone Detector / AI 腔检测
-- Chapter Pacing Analyzer / 剧情节奏诊断
-- Foreshadow Payoff Recommender / 伏笔回收推荐
-- Platform Adapter / 平台适配器
+StoryMemory Studio improves long-context hit rate by:
 
-### 6. IP Adaptation and Distribution / IP 改编与分发
+- using SQLite as the stable memory source;
+- ranking memories before prompt construction;
+- separating hard constraints from background lore;
+- repeating high-risk constraints in clear headings;
+- keeping recent chapter facts close to the generation task;
+- feeding recent AI-tone and consistency reports back into the next prompt;
+- using DeepSeek long context for global reasoning, not as a replacement for the database.
 
-- Adaptation Matrix / 章节改编矩阵
-- Comic Storyboard / 漫画分镜
-- Short Drama Script / 短剧脚本
-- Xiaohongshu Post / 小红书文案
-- Poster and Character Card Prompts / 海报与角色卡提示词
-
----
-
-## Architecture / 架构概览
-
-```text
-User Input / Existing Chapters / Novel Seed
-                |
-                v
-       Memory Extractor
-                |
-                v
- SQLite Story Memory Database
-                |
-                v
-        Context Builder
-   S / A / B / C / D priority layers
-                |
-                v
- LLM Provider: DeepSeek / OpenAI-compatible / Ollama
-                |
-                v
- Chapter Generator -> Output Cleaner -> humanizer-zh
-                |
-                v
- Consistency Checker / AI Tone Detector / Novelization Rewriter
-                |
-                v
- Memory Update + Logs + Export
-```
-
-核心原则：
-
-1. **数据库是事实来源**，LLM 不是。
-2. **长上下文用于全局理解和一致性推理**，不是拿来无脑塞全文。
-3. **生成前构建上下文，生成后检查并更新记忆**。
-4. **用户可以编辑所有关键创作资产**。
-5. **所有 AI 输出都要可追踪**。
+目标不是宣称“百分百不忘”，而是让模型在生成当前章节时更容易命中正确事实。系统通过结构化数据库、优先级召回、硬设定标题化、最近事实前置、质量反馈闭环来提高命中率。DeepSeek 的百万 token 能力用于全局理解和长线一致性，SQLite 仍然是事实来源。
 
 ---
 
-## Quick Start for Windows Users / Windows 用户快速启动
+## Core Features / 核心功能
 
-Download or build the release package, then double-click:
+- **Create Novel Wizard / 从 0 创建小说**  
+  Generate a project Bible, world rules, character cards, relationships, foreshadows, timeline, first volume outline, first 10 chapter outlines, and first chapter draft from a small seed.
 
-```text
-StoryMemoryStudio.exe
-```
+- **Story Memory Engine / 长篇记忆引擎**  
+  Maintains structured memory for characters, facts, foreshadows, rules, timeline events, style profiles, forbidden rules, and unresolved questions.
 
-First launch may take 10-30 seconds. The app opens a local browser page:
+- **Context Builder / 长上下文编排器**  
+  Builds structured prompts using S/A/B/C/D priority layers instead of dumping raw text.
 
-```text
-http://127.0.0.1:8501
-```
+- **LLM Providers / 模型接入**  
+  Supports DeepSeek, OpenAI-compatible APIs, OpenAI, and local Ollama models. Default release behavior prefers Ollama when available.
 
-If the browser does not open, check:
+- **Style Profiler / 文风学习器**  
+  Extracts abstract style profiles from pasted or uploaded samples. It does not copy protected text, unique metaphors, character names, or story events.
 
-```text
-start_log.txt
-```
+- **humanizer-zh Built In / 中文真人化处理**  
+  Cleans model traces, template sentences, vague summaries, prompt leakage, `<think>` remnants, and obvious AI-flavored prose after generation.
 
-中文：
+- **AI Tone Detector / AI 腔检测器**  
+  Separates real AI artifacts from acceptable light-novel expression, reports issue density, reader impact, and rewrite priority.
 
-进入发布包目录，双击：
+- **Novelization Rewriter / 小说化重写器**  
+  Converts setting-card style chapters into scene-driven narrative with action, subtext, friction, objects, and concrete hooks.
 
-```text
-StoryMemoryStudio.exe
-```
+- **Consistency Checker / 一致性检查器**  
+  Checks character drift, timeline conflicts, item state errors, ability-system breaks, foreshadow misuse, and chapter goal completion.
 
-首次启动可能需要等待 10-30 秒。启动后会自动打开浏览器。如果没有打开，请查看 exe 同级目录的 `start_log.txt`。
-
----
-
-## Release Folder / 发布包目录
-
-```text
-dist/
-├── StoryMemoryStudio.exe
-├── data/
-├── exports/
-├── prompts/
-├── .env
-├── .env.example
-├── README.md
-├── README_使用说明.md
-├── schema.sql
-└── start_log.txt
-```
-
-- `data/`: local SQLite database and project data
-- `exports/`: exported docx, md, json files
-- `prompts/`: prompt templates
-- `.env`: model and path configuration
-- `start_log.txt`: launcher logs
-
-发布版不会把用户数据库写入 PyInstaller 临时目录，默认都保存在 exe 同级目录。
+- **IP Adaptation Matrix / IP 改编矩阵**  
+  Converts chapters into comic storyboards, short drama scripts, AI video storyboards, Xiaohongshu posts, poster prompts, character cards, quotes, and teaser copy.
 
 ---
 
-## Local Development / 开发模式
+## Navigation / 界面导航
+
+The UI is grouped into six primary sections:
+
+1. **创作启动**: 从 0 创建小说、项目管理、章节导入
+2. **记忆中枢**: 记忆库看板、记忆编辑器、备份与恢复
+3. **章节创作**: 章节生成、章节编辑与导出、文风学习器、模型与数据设置
+4. **一致性管理**: 一致性检查、伏笔管理、时间线管理、人物弧光追踪
+5. **质量优化**: AI 腔检测、剧情节奏诊断、伏笔回收推荐、平台适配器
+6. **IP 改编与分发**: 章节改编矩阵、漫画分镜、短剧脚本、小红书文案、海报/角色卡提示词
+
+---
+
+## Quick Start / 快速开始
+
+### Windows release
+
+1. Download `StoryMemoryStudio.exe` from the release page.
+2. Double-click it.
+3. Wait for the local page to open.
+4. Go to **模型与数据设置** to configure Ollama, DeepSeek, or OpenAI-compatible APIs.
+5. Create a project or import existing chapters.
+
+### Local development
 
 ```powershell
 python -m venv .venv
@@ -248,134 +235,7 @@ python -m compileall app -q
 python -m pytest -q
 ```
 
-Current smoke test status:
-
-```text
-7 passed
-```
-
----
-
-## Model Setup / 模型配置
-
-StoryMemory Studio supports:
-
-- Ollama local models
-- DeepSeek API
-- OpenAI-compatible APIs
-- OpenAI API
-
-Default local configuration:
-
-```env
-OLLAMA_BASE_URL=http://127.0.0.1:11434
-DEFAULT_MODEL_PROVIDER=ollama
-DEFAULT_OLLAMA_MODEL=auto
-```
-
-Recommended Ollama models:
-
-```bash
-ollama pull qwen3
-ollama pull qwen2.5
-ollama pull deepseek-r1
-```
-
-中文：
-
-默认优先使用 Ollama 本地模型。也可以在“章节创作 / 模型与数据设置”里配置 DeepSeek 或 OpenAI-compatible API。
-
----
-
-## Typical Workflow / 推荐工作流
-
-### New Novel / 从 0 创建小说
-
-1. Open `创作启动 / 从 0 创建小说`
-2. Enter title, genre, platform, premise, protagonist, goal, selling points, avoid list, style reference
-3. Generate a project Bible
-4. Preview and edit characters, world rules, foreshadows, timeline, first 10 chapter outlines
-5. Commit to Story Memory
-6. Generate chapter one
-7. Check consistency and AI tone
-8. Continue chapter by chapter
-
-中文：
-
-1. 进入“创作启动 / 从 0 创建小说”
-2. 填写标题、题材、平台、一句话设定、主角、目标、核心爽点、禁忌内容和文风参考
-3. 生成小说 Bible
-4. 预览并编辑人物、世界观、伏笔、时间线和前 10 章章纲
-5. 确认写入 Story Memory
-6. 生成第一章
-7. 做一致性检查和 AI 腔检测
-8. 继续生成后续章节
-
-### Existing Novel / 导入已有作品
-
-1. Create or select a project
-2. Import txt, md, or docx chapters
-3. Extract memory
-4. Review the memory dashboard
-5. Continue writing with Context Builder
-
-中文：
-
-1. 创建或选择项目
-2. 导入 `txt/md/docx` 章节
-3. 抽取记忆
-4. 查看记忆库看板
-5. 用 Context Builder 继续生成后续章节
-
----
-
-## humanizer-zh Integration / 真人化处理
-
-The MVP includes a local `humanizer-zh` module. It is called after chapter generation and during AI-tone repair / novelization rewriting.
-
-It helps remove:
-
-- `<think>` remnants
-- English drafting traces
-- prompt leakage
-- template endings
-- vague emotional summaries
-- formulaic “not only X but Y” structures
-- over-explained AI-style prose
-
-It is conservative by design. It does **not** rewrite the plot wildly. It keeps story facts, character relationships, foreshadows, and chapter hooks intact.
-
-中文：
-
-当前版本已经内置 `humanizer-zh`。章节生成后会自动经过：
-
-```text
-LLM output -> output_cleaner -> humanizer-zh -> save/export
-```
-
-AI 腔润色和小说化重写也会调用同一套逻辑。它主要清理模型痕迹、模板句、英文草稿、空泛总结和提示词残留，不会大幅改剧情。
-
----
-
-## Export / 导出
-
-Supported exports:
-
-- Single chapter: `txt`, `md`, `docx`, `json`
-- Full project: `docx`
-- Story Bible: `world_bible.md`, `character_bible.md`, `outline.md`, `timeline.md`, `foreshadows.md`
-- Style profile: `json`, `md`, prompt rules
-- Adaptation outputs: `json`, `markdown`
-
-导出文件默认在：
-
-```text
-exports/
-```
-
----
-
-## Build Windows EXE / 打包 Windows 可执行文件
+Build Windows exe:
 
 ```powershell
 python build_exe.py
@@ -387,7 +247,112 @@ Output:
 dist/StoryMemoryStudio.exe
 ```
 
-`build_exe.py` collects Streamlit resources, prompt templates, schema, README, and required app modules. It also creates runtime folders such as `data/` and `exports/`.
+---
+
+## Model Setup / 模型配置
+
+Default local configuration:
+
+```env
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+DEFAULT_MODEL_PROVIDER=ollama
+DEFAULT_OLLAMA_MODEL=auto
+DEEPSEEK_API_KEY=
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+OPENAI_COMPATIBLE_API_KEY=
+OPENAI_COMPATIBLE_BASE_URL=
+STORYMEMORY_DATA_DIR=./data
+STORYMEMORY_EXPORT_DIR=./exports
+```
+
+Recommended local models:
+
+```bash
+ollama pull qwen3
+ollama pull qwen2.5
+ollama pull deepseek-r1
+```
+
+If Ollama is unavailable, configure DeepSeek or an OpenAI-compatible endpoint in the settings page.
+
+---
+
+## Typical Workflows / 推荐工作流
+
+### New novel / 从 0 创建
+
+1. 打开 **创作启动 / 从 0 创建小说**。
+2. 输入标题、题材、平台、核心设定、主角、目标、爽点、禁忌内容和文风参考。
+3. 生成小说 Bible。
+4. 预览并编辑世界观、人物卡、伏笔、时间线、前 10 章章纲和第一章草稿。
+5. 确认写入 Story Memory。
+6. 使用 Context Builder 生成下一章。
+7. 运行一致性检查、AI 腔检测和小说化重写。
+8. 导出 docx。
+
+### Existing novel / 导入已有作品
+
+1. 创建或选择项目。
+2. 导入 `txt`、`md` 或 `docx` 章节。
+3. 抽取人物、事实、伏笔、时间线和世界观规则。
+4. 在记忆库看板中审查并编辑。
+5. 使用上下文构建器继续写后续章节。
+
+### Quality loop / 质量优化闭环
+
+1. 生成章节。
+2. 运行 AI 腔检测。
+3. 对高风险段落执行句子修复、段落润色或小说化重写。
+4. 保存为新版本。
+5. 把高频 AI 腔问题反馈给下一章 Context Builder。
+
+---
+
+## Architecture / 架构
+
+```text
+Novel seed / imported chapters / user edits
+                |
+                v
+        Memory Extractor
+                |
+                v
+ SQLite Story Memory Database
+                |
+                v
+        Context Builder
+  S / A / B / C / D priority layers
+                |
+                v
+ DeepSeek / OpenAI-compatible / OpenAI / Ollama
+                |
+                v
+ Chapter Generator
+                |
+                v
+ Output Cleaner -> humanizer-zh -> Novelization Rewriter
+                |
+                v
+ Consistency Checker / AI Tone Detector / Pacing Analyzer
+                |
+                v
+ Memory Update + Logs + Export
+```
+
+---
+
+## Data Safety / 数据安全
+
+StoryMemory Studio is local-first:
+
+- project database: `data/`
+- exported files: `exports/`
+- model configuration: `.env`
+- startup logs: `start_log.txt`
+- no project data is uploaded by default
+- `.env`, `data/`, `exports/`, `backups/`, `dist/`, and `.venv/` are ignored by git
+
+发布版不会把用户数据库写入 PyInstaller 临时目录。数据库、导出文件和配置文件都默认保存在 exe 同级目录。
 
 ---
 
@@ -400,39 +365,55 @@ python -m app.cli build-context demo 2 --goal 推进主线 --mode standard
 python -m app.cli detect-ai-tone --project-id 1 --chapter-id 1
 python -m app.cli novelize-chapter --project-id 1 --chapter-id 1 --save-as-new-version true
 python -m app.cli adapt-chapter --project-id 1 --chapter-id 1 --type all
+python -m app.cli export-docx --project-id 1 --output exports/my_novel.docx
 ```
 
 ---
 
-## Data Safety / 数据安全
+## Release Package / 发布包结构
 
-StoryMemory Studio is local-first:
-
-- No project data is uploaded by default.
-- SQLite database stays in `data/`.
-- Exported documents stay in `exports/`.
-- `.env` is ignored by git.
-- User data folders are ignored by git.
-
-中文：
-
-默认不上传用户作品数据。数据库、导出文件和配置都保存在本地。`.gitignore` 已排除 `.env`、`data/`、`exports/`、`backups/`、`dist/` 和 `.venv/`。
-
----
-
-## Known TODO / 当前 TODO
-
-- Legacy `.doc` import depends on system environment; `txt/md/docx` are the stable paths.
-- Release package does not yet include installer, tray exit, or code signing.
-- Advanced quality modules have working MVP flows; future versions can add benchmark datasets and richer evaluation.
+```text
+dist/
+├── StoryMemoryStudio.exe
+├── data/
+├── exports/
+├── prompts/
+├── .env
+├── .env.example
+├── README.md
+├── README_使用说明.md
+├── schema.sql
+└── start_log.txt
+```
 
 ---
 
-## Suggested Repository Description
+## Current MVP Status / 当前状态
 
-**A local-first AI writing control center for long-form fiction: structured story memory, long-context prompt orchestration, consistency checks, AI-tone cleanup, and IP adaptation.**
+Working MVP:
 
-中文一句话：
+- grouped Chinese Streamlit UI;
+- local SQLite database initialization;
+- Create Novel Wizard;
+- chapter import and generation;
+- Story Memory dashboard and editor;
+- context builder with long-context budget modes;
+- DeepSeek, OpenAI-compatible, OpenAI, and Ollama connectors;
+- style profiler and humanizer-zh integration;
+- AI tone detector and novelization rewriter;
+- docx export;
+- PyInstaller Windows launcher.
 
-**一个本地优先的长篇小说 AI 创作中控台：结构化记忆、长上下文编排、一致性检查、AI 腔治理与 IP 改编。**
+Known TODO:
 
+- `.doc` import depends on the local Windows environment; `txt`, `md`, and `docx` are the stable paths.
+- Release exe is not code-signed yet.
+- Advanced quality scoring is an MVP heuristic plus LLM-assisted workflow; future versions can add benchmark datasets.
+
+---
+
+## One-Line Pitch / 一句话
+
+**A local-first AI writing control center for long-form fiction: structured story memory, DeepSeek-ready long-context orchestration, consistency checks, AI-tone cleanup, and IP adaptation.**
+
+**一个本地优先的长篇小说 AI 创作中控台：结构化记忆、DeepSeek 百万 token 长上下文编排、一致性检查、AI 腔治理与 IP 改编。**
