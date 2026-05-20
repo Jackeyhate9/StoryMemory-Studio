@@ -1,4 +1,4 @@
-# StoryMemory Studio
+﻿# StoryMemory Studio
 
 **中文名：长篇记忆小说**
 
@@ -16,7 +16,7 @@ StoryMemory Studio 是一个本地优先的长篇小说与 IP 创作中控台。
 
 Windows release:
 
-[Download StoryMemoryStudio.exe](https://github.com/Jackeyhate9/StoryMemory-Studio/releases/download/v0.1.0/StoryMemoryStudio.exe)
+[Download StoryMemoryStudio.exe](https://github.com/Jackeyhate9/StoryMemory-Studio/releases/download/v1.0.0/StoryMemoryStudio.exe)
 
 Repository:
 
@@ -453,3 +453,4 @@ Known TODO:
 **A local-first AI writing control center for long-form fiction: structured story memory, DeepSeek-ready long-context orchestration, consistency checks, AI-tone cleanup, and IP adaptation.**
 
 **一个本地优先的长篇小说 AI 创作中控台：结构化记忆、DeepSeek 百万 token 长上下文编排、一致性检查、AI 腔治理与 IP 改编。**
+
