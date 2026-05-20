@@ -196,6 +196,42 @@ StoryMemory Studio improves long-context hit rate by:
 
 ---
 
+## Technology Stack / 技术栈
+
+StoryMemory Studio is intentionally built as a practical local desktop MVP, not a cloud-only demo.
+
+StoryMemory Studio 的技术选型优先考虑：本地可运行、数据可控、方便打包、方便后续扩展。
+
+| Layer | Technology | Why it is used |
+| --- | --- | --- |
+| Local UI | Streamlit | Fast local visual interface, friendly for non-technical users |
+| Desktop packaging | PyInstaller | Builds a double-clickable Windows exe |
+| Database | SQLite | Local-first structured story memory |
+| ORM / SQL | SQLAlchemy + sqlite3 | Stable database access and schema initialization |
+| Data validation | Pydantic | Validate LLM JSON outputs before writing memory |
+| CLI | Typer + Rich | Developer and power-user command line workflows |
+| LLM calls | httpx | DeepSeek, OpenAI-compatible, OpenAI, and Ollama HTTP APIs |
+| Local models | Ollama | Offline/private local generation path |
+| Long-context orchestration | Context Builder | S/A/B/C/D priority prompt assembly for DeepSeek-style long context |
+| Export | python-docx | Export chapters and full projects as docx |
+| Quality layer | AI Tone Detector + humanizer-zh + Novelization Rewriter | Reduce AI flavor and convert exposition-heavy text into scene-driven fiction |
+
+| 层级 | 技术 | 用途 |
+| --- | --- | --- |
+| 本地界面 | Streamlit | 普通用户可直接打开浏览器使用 |
+| Windows 打包 | PyInstaller | 生成可双击启动的 exe |
+| 本地数据库 | SQLite | 保存人物、伏笔、时间线、章节事实等结构化记忆 |
+| 数据访问 | SQLAlchemy + sqlite3 | 初始化数据库和读写 Story Memory |
+| 结构化校验 | Pydantic | 校验 LLM 输出 JSON，避免脏数据入库 |
+| 命令行 | Typer + Rich | 给高级用户和自动化测试使用 |
+| 模型请求 | httpx | 接入 DeepSeek、OpenAI-compatible、OpenAI、Ollama |
+| 本地模型 | Ollama | 支持离线/私有化生成 |
+| 长上下文编排 | Context Builder | 按 S/A/B/C/D 优先级适配 DeepSeek 百万 token 长上下文 |
+| 文档导出 | python-docx | 导出 docx 小说正文和设定包 |
+| 质量治理 | AI Tone Detector + humanizer-zh + Novelization Rewriter | 降低 AI 腔，把说明型章节改成场景驱动叙事 |
+
+---
+
 ## Navigation / 界面导航
 
 The UI is grouped into six primary sections:

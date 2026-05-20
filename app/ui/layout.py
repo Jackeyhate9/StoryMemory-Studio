@@ -58,6 +58,11 @@ def inject_css() -> None:
         .story-tag { display: inline-block; border: 1px solid var(--story-line); background: #f8fafc; color: #475569; border-radius: 999px; padding: .2rem .48rem; font-size: .78rem; line-height: 1.2; }
         .story-workflow { background: #fff; border: 1px solid var(--story-line); border-radius: 8px; padding: 1rem; margin-top: .8rem; }
         .story-workflow h3 { margin: 0 0 .75rem 0; font-size: 1rem; }
+        .story-muted-line { color: var(--story-muted); font-size: .9rem; line-height: 1.65; margin: -.25rem 0 .85rem 0; }
+        .story-tech-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
+        .story-mini-card { border: 1px solid var(--story-line); border-radius: 8px; padding: .75rem; background: #f8fafc; min-height: 105px; }
+        .story-mini-card b { display: block; color: var(--story-ink); font-size: .9rem; margin-bottom: .35rem; }
+        .story-mini-card span { display: block; color: var(--story-muted); font-size: .8rem; line-height: 1.55; }
         .story-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
         .story-step { border: 1px solid var(--story-line); border-radius: 8px; padding: .75rem; background: #f8fafc; }
         .story-step b { display: block; font-size: .9rem; margin-bottom: .3rem; }
@@ -203,6 +208,7 @@ def render_dashboard(project: str | None) -> None:
     snapshot = dashboard_snapshot(project)
     _render_dashboard_intro(project, snapshot)
     _render_metrics(project, snapshot)
+    _render_tech_stack()
 
     st.subheader("功能板块")
     items = list(NAVIGATION.items())
@@ -232,6 +238,41 @@ def render_dashboard(project: str | None) -> None:
                     st.rerun()
 
     _render_workflow()
+
+
+def _render_tech_stack() -> None:
+    tech_items = [
+        ("本地数据", "SQLite + SQLAlchemy，项目数据默认保存在本机 data/ 目录。"),
+        ("长上下文编排", "Context Builder 按 S/A/B/C/D 优先级组织 DeepSeek 百万 token 级上下文。"),
+        ("模型接入", "支持 DeepSeek、OpenAI-compatible、OpenAI 与 Ollama 本地模型。"),
+        ("前端界面", "Streamlit 本地 Web UI，可通过 PyInstaller 打包为 Windows exe。"),
+        ("结构化校验", "Pydantic 校验 LLM JSON 输出，并带有 JSON 修复机制。"),
+        ("导出能力", "python-docx 导出 docx，支持 md、txt、json 等文本资产。"),
+        ("质量治理", "AI 腔检测、humanizer-zh、小说化重写、节奏诊断与一致性检查。"),
+        ("IP 改编", "章节可转漫画分镜、短剧脚本、视频分镜、小红书文案和海报提示词。"),
+    ]
+    cards = "".join(
+        f"""
+        <div class="story-mini-card">
+          <b>{title}</b>
+          <span>{body}</span>
+        </div>
+        """
+        for title, body in tech_items
+    )
+    st.markdown(
+        f"""
+        <div class="story-workflow">
+          <h3>技术架构</h3>
+          <p class="story-muted-line">
+            StoryMemory Studio 使用“本地结构化记忆库 + 长上下文 Prompt 编排 + 多模型接入 + 质量反馈闭环”的架构，
+            让长篇创作既能保留可编辑的事实来源，也能利用 DeepSeek 等长上下文模型做全局理解与一致性检查。
+          </p>
+          <div class="story-tech-grid">{cards}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_selected_page(project: str | None, section: str, page: str) -> None:
