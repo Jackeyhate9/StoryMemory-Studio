@@ -5,7 +5,7 @@ import importlib
 import streamlit as st
 
 from app.ui.navigation import NAVIGATION, PUBLIC_WITHOUT_PROJECT, module_path
-from app.ui.services import dashboard_snapshot, health_snapshot, list_projects
+from app.ui.services import RESOURCE_ROOT, dashboard_snapshot, health_snapshot, list_projects
 
 
 SECTION_ACCENTS = {
@@ -63,6 +63,7 @@ def inject_css() -> None:
         .story-mini-card { border: 1px solid var(--story-line); border-radius: 8px; padding: .75rem; background: #f8fafc; min-height: 105px; }
         .story-mini-card b { display: block; color: var(--story-ink); font-size: .9rem; margin-bottom: .35rem; }
         .story-mini-card span { display: block; color: var(--story-muted); font-size: .8rem; line-height: 1.55; }
+        .story-support-caption { color: var(--story-muted); font-size: .86rem; line-height: 1.65; margin-top: .35rem; }
         .story-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .7rem; }
         .story-step { border: 1px solid var(--story-line); border-radius: 8px; padding: .75rem; background: #f8fafc; }
         .story-step b { display: block; font-size: .9rem; margin-bottom: .3rem; }
@@ -238,6 +239,7 @@ def render_dashboard(project: str | None) -> None:
                     st.rerun()
 
     _render_workflow()
+    _render_support_info()
 
 
 def _render_tech_stack() -> None:
@@ -260,6 +262,36 @@ def _render_tech_stack() -> None:
         """
         for title, body in tech_items
     )
+
+
+def _render_support_info() -> None:
+    reward_qr = RESOURCE_ROOT / "app" / "ui" / "assets" / "wechat_reward_qr.jpg"
+    contact_qr = RESOURCE_ROOT / "app" / "ui" / "assets" / "wechat_contact_qr.jpg"
+    st.markdown(
+        """
+        <div class="story-workflow">
+          <h3>支持与交流</h3>
+          <p class="story-muted-line">
+            如果 StoryMemory Studio 帮你节省了长篇创作和记忆整理时间，欢迎赞赏支持。
+            使用中遇到问题、想交流长篇小说 AI 工作流、反馈 bug 或提出功能建议，也可以扫码添加交流。
+          </p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    col_reward, col_contact = st.columns(2)
+    with col_reward:
+        if reward_qr.exists():
+            st.image(str(reward_qr), caption="赞赏支持：推荐使用微信支付", width=300)
+        else:
+            st.info("赞赏二维码资源未找到。")
+        st.markdown('<div class="story-support-caption">你的支持会用于继续维护本地创作工具、长上下文记忆优化和 Windows 发布包。</div>', unsafe_allow_html=True)
+    with col_contact:
+        if contact_qr.exists():
+            st.image(str(contact_qr), caption="交流反馈：扫码添加作者微信", width=300)
+        else:
+            st.info("交流二维码资源未找到。")
+        st.markdown('<div class="story-support-caption">添加时建议备注：StoryMemory。欢迎反馈使用体验、模型适配问题和长篇创作需求。</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
         <div class="story-workflow">

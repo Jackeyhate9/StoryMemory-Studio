@@ -28,6 +28,19 @@ Windows may warn about unsigned PyInstaller executables. This is expected for an
 
 ---
 
+## Support and Community / 赞赏支持与交流反馈
+
+If StoryMemory Studio saves you time on long-form writing, memory management, or Windows packaging, support is welcome. Feedback, bug reports, model adaptation notes, and long-fiction workflow discussions are also welcome.
+
+如果这个项目帮你节省了长篇创作、记忆整理、AI 腔治理或打包部署时间，欢迎赞赏支持。也欢迎扫码交流使用体验、反馈 bug、提出功能建议，或讨论长篇小说 AI 创作工作流。
+
+| 赞赏支持 / Support | 交流反馈 / Community |
+| --- | --- |
+| ![微信赞赏二维码](app/ui/assets/wechat_reward_qr.jpg) | ![微信交流二维码](app/ui/assets/wechat_contact_qr.jpg) |
+| 推荐使用微信支付。支持会用于继续维护本地创作工具、长上下文记忆优化和 Windows 发布包。 | 扫码添加作者微信，建议备注：`StoryMemory`。 |
+
+---
+
 ## Interface Preview / 界面预览
 
 > The screenshots below are UI previews generated from the current Streamlit layout. Actual project data depends on your local database.
