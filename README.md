@@ -268,11 +268,85 @@ The UI is grouped into six primary sections:
 4. Go to **模型与数据设置** to configure Ollama, DeepSeek, or OpenAI-compatible APIs.
 5. Create a project or import existing chapters.
 
-### Local development
+### Source install with Git / 通过 Git 克隆源码运行
+
+If you prefer the command line, want to modify the code, or want to run the latest source version:
+
+如果你希望通过命令行运行、二次开发，或使用 Git 克隆最新源码：
+
+```powershell
+git clone https://github.com/Jackeyhate9/StoryMemory-Studio.git
+cd StoryMemory-Studio
+
+python -m venv .venv
+.\.venv\Scripts\activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+copy .env.example .env
+python run_ui.py
+```
+
+macOS / Linux:
+
+```bash
+git clone https://github.com/Jackeyhate9/StoryMemory-Studio.git
+cd StoryMemory-Studio
+
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+cp .env.example .env
+python run_ui.py
+```
+
+After startup, open:
+
+```text
+http://127.0.0.1:8501
+```
+
+启动后浏览器会自动打开；如果没有自动打开，可以手动访问上面的地址。
+
+### Environment requirements / 环境与依赖要求
+
+Required:
+
+- Git
+- Python `3.11+` recommended
+- `pip`
+- Local disk write permission for `data/`, `exports/`, `logs/`
+
+Optional but recommended:
+
+- Ollama, for local model generation
+- DeepSeek API key, for long-context cloud generation
+- OpenAI-compatible API endpoint, if you use a third-party model gateway
+
+主要 Python dependencies:
+
+| Purpose | Packages |
+| --- | --- |
+| Local UI | `streamlit` |
+| CLI | `typer`, `rich` |
+| Database | `sqlite3`, `sqlalchemy` |
+| Data validation | `pydantic`, `pydantic-settings` |
+| LLM API calls | `httpx`, `requests`, `python-dotenv` |
+| Export | `python-docx` |
+| Charts / tables | `pandas`, `plotly` |
+| Packaging | `pyinstaller` |
+| Tests | `pytest` |
+
+依赖列表以 `requirements.txt` 为准。
+
+### Local development / 本地开发
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\activate
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 python run_ui.py
 ```
@@ -407,6 +481,14 @@ StoryMemory Studio is local-first:
 
 ## CLI Examples / CLI 示例
 
+All CLI commands should be run from the repository root after activating the virtual environment.
+
+所有命令行操作都建议在项目根目录执行，并先激活虚拟环境。
+
+```powershell
+.\.venv\Scripts\activate
+```
+
 ```powershell
 python -m app.cli init --name demo --title 我的小说
 python -m app.cli import-chapter demo ./chapter1.txt --number 1 --title 第一章 --provider none
@@ -415,6 +497,34 @@ python -m app.cli detect-ai-tone --project-id 1 --chapter-id 1
 python -m app.cli novelize-chapter --project-id 1 --chapter-id 1 --save-as-new-version true
 python -m app.cli adapt-chapter --project-id 1 --chapter-id 1 --type all
 python -m app.cli export-docx --project-id 1 --output exports/my_novel.docx
+```
+
+Common CLI workflow:
+
+```powershell
+# 1. Initialize database and create a project
+python -m app.cli init --name demo --title 我的小说
+
+# 2. Import an existing chapter and extract Story Memory
+python -m app.cli import-chapter demo .\samples\chapter1.txt --number 1 --title 第一章 --provider none
+
+# 3. Build long-context prompt preview
+python -m app.cli build-context demo 2 --goal "推进主线并回收一个伏笔" --mode standard
+
+# 4. Run AI-tone detection and novelization rewrite
+python -m app.cli detect-ai-tone --project-id 1 --chapter-id 1
+python -m app.cli novelize-chapter --project-id 1 --chapter-id 1 --save-as-new-version true
+
+# 5. Export docx
+python -m app.cli export-docx --project-id 1 --output exports/demo.docx
+```
+
+For local-only testing without API keys, use `--provider none` where supported. To use Ollama, start Ollama first and configure:
+
+```env
+DEFAULT_MODEL_PROVIDER=ollama
+OLLAMA_BASE_URL=http://127.0.0.1:11434
+DEFAULT_OLLAMA_MODEL=auto
 ```
 
 ---
