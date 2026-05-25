@@ -262,6 +262,19 @@ def _render_tech_stack() -> None:
         """
         for title, body in tech_items
     )
+    st.markdown(
+        f"""
+        <div class="story-workflow">
+          <h3>技术架构</h3>
+          <p class="story-muted-line">
+            StoryMemory Studio 使用“本地结构化记忆库 + 长上下文 Prompt 编排 + 多模型接入 + 质量反馈闭环”的架构，
+            让长篇创作既能保留可编辑的事实来源，也能利用 DeepSeek 等长上下文模型做全局理解与一致性检查。
+          </p>
+          <div class="story-tech-grid">{cards}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def _render_support_info() -> None:
@@ -292,19 +305,6 @@ def _render_support_info() -> None:
         else:
             st.info("交流二维码资源未找到。")
         st.markdown('<div class="story-support-caption">添加时建议备注：StoryMemory。欢迎反馈使用体验、模型适配问题和长篇创作需求。</div>', unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div class="story-workflow">
-          <h3>技术架构</h3>
-          <p class="story-muted-line">
-            StoryMemory Studio 使用“本地结构化记忆库 + 长上下文 Prompt 编排 + 多模型接入 + 质量反馈闭环”的架构，
-            让长篇创作既能保留可编辑的事实来源，也能利用 DeepSeek 等长上下文模型做全局理解与一致性检查。
-          </p>
-          <div class="story-tech-grid">{cards}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
 
 
 def render_selected_page(project: str | None, section: str, page: str) -> None:
