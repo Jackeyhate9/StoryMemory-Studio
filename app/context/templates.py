@@ -22,6 +22,9 @@ CONTEXT_TEMPLATE = """【任务目标】
 【相关伏笔】
 {foreshadows}
 
+【上一章桥接】
+{previous_chapter_bridge}
+
 【最近剧情摘要】
 {recent_summaries}
 

@@ -25,13 +25,20 @@ def generate_chapter(
     temperature: float = 0.7,
 ) -> str:
     template = PROMPT_PATH.read_text(encoding="utf-8")
-    prompt = template.format(context=context_prompt, mode=mode, extra_instruction=extra_instruction)
-    raw = client.complete(
-        prompt,
-        system="你是严谨的长篇小说创作中控台，必须优先遵守结构化记忆，并写出自然、具体、场景驱动的中文小说正文。",
-        temperature=temperature,
-    )
-    return _postprocess_generated_prose(raw)
+    retry_note = ""
+    last_text = ""
+    for attempt in range(2):
+        prompt = template.format(context=context_prompt, mode=mode, extra_instruction=extra_instruction + retry_note)
+        raw = client.complete(
+            prompt,
+            system="你是严谨的长篇小说创作中控台，必须优先遵守结构化记忆，并写出自然、具体、场景驱动的中文小说正文。只输出正文，不输出提纲、检查项、英文笔记或创作说明。",
+            temperature=temperature if attempt == 0 else max(0.45, temperature - 0.15),
+        )
+        last_text = _postprocess_generated_prose(raw)
+        if len(last_text.strip()) >= 200:
+            return last_text
+        retry_note = "\n\n【重试要求】上一次输出被判定为空或过短。请直接输出中文小说正文，不要输出任何英文、提纲、检查清单、创作说明或 Markdown。"
+    return last_text
 
 
 def rewrite_if_too_similar(

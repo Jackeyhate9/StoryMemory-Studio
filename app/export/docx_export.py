@@ -22,16 +22,25 @@ def _set_cell_shading(cell, fill: str) -> None:
     tc_pr.append(shd)
 
 
+def _set_font(run, name: str = "宋体", size: int | None = None) -> None:
+    run.font.name = name
+    run._element.rPr.rFonts.set(qn("w:eastAsia"), name)
+    if size is not None:
+        run.font.size = Pt(size)
+
+
 def _style_document(doc: Document) -> None:
     section = doc.sections[0]
     section.top_margin = Cm(2.2)
     section.bottom_margin = Cm(2)
     section.left_margin = Cm(2.3)
     section.right_margin = Cm(2.3)
+
     normal = doc.styles["Normal"]
     normal.font.name = "宋体"
     normal._element.rPr.rFonts.set(qn("w:eastAsia"), "宋体")
     normal.font.size = Pt(11)
+
     for name, size, color in [("Title", 24, "172033"), ("Heading 1", 16, "172033"), ("Heading 2", 13, "2563EB")]:
         style = doc.styles[name]
         style.font.name = "微软雅黑"
@@ -55,7 +64,7 @@ def _add_body(doc: Document, text: str) -> None:
         p.paragraph_format.first_line_indent = Pt(22)
         p.paragraph_format.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
         p.paragraph_format.space_after = Pt(4)
-        p.add_run(line)
+        _set_font(p.add_run(line))
 
 
 def _add_table(doc: Document, headers: list[str], rows: list[list[Any]], title: str | None = None) -> None:
@@ -79,12 +88,18 @@ def export_project_docx(conn, project_id: int, output: str | Path, model_name: s
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     project = dict(conn.execute("SELECT * FROM projects WHERE id = ?", (project_id,)).fetchone())
-    chapters = rows_to_dicts(conn.execute("SELECT * FROM chapters WHERE project_id = ? ORDER BY chapter_number", (project_id,)).fetchall())
-    characters = rows_to_dicts(conn.execute("SELECT * FROM characters WHERE project_id = ? ORDER BY importance DESC, id", (project_id,)).fetchall())
+    chapters = rows_to_dicts(
+        conn.execute("SELECT * FROM chapters WHERE project_id = ? ORDER BY chapter_number", (project_id,)).fetchall()
+    )
+    characters = rows_to_dicts(
+        conn.execute("SELECT * FROM characters WHERE project_id = ? ORDER BY importance DESC, id", (project_id,)).fetchall()
+    )
     world_rules = rows_to_dicts(conn.execute("SELECT * FROM world_rules WHERE project_id = ? ORDER BY id", (project_id,)).fetchall())
     foreshadows = rows_to_dicts(conn.execute("SELECT * FROM foreshadows WHERE project_id = ? ORDER BY id", (project_id,)).fetchall())
     summaries = rows_to_dicts(conn.execute("SELECT * FROM chapter_summaries WHERE project_id = ? ORDER BY chapter_id", (project_id,)).fetchall())
-    quality_reports = rows_to_dicts(conn.execute("SELECT * FROM quality_reports WHERE project_id = ? ORDER BY id DESC LIMIT 30", (project_id,)).fetchall())
+    quality_reports = rows_to_dicts(
+        conn.execute("SELECT * FROM quality_reports WHERE project_id = ? ORDER BY id DESC LIMIT 30", (project_id,)).fetchall()
+    )
 
     doc = Document()
     _style_document(doc)
@@ -94,16 +109,18 @@ def export_project_docx(conn, project_id: int, output: str | Path, model_name: s
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     run = p.add_run(title)
     run.bold = True
-    run.font.name = "微软雅黑"
-    run._element.rPr.rFonts.set(qn("w:eastAsia"), "微软雅黑")
-    run.font.size = Pt(26)
+    _set_font(run, "微软雅黑", 26)
     run.font.color.rgb = RGBColor(23, 32, 51)
+
     subtitle = doc.add_paragraph()
     subtitle.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    subtitle.add_run(project.get("genre") or "").italic = True
+    sub_run = subtitle.add_run(project.get("genre") or "")
+    sub_run.italic = True
+    _set_font(sub_run, "微软雅黑", 12)
+
     meta = doc.add_paragraph()
     meta.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    meta.add_run(f"生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M')}    使用模型：{model_name or '未记录'}")
+    _set_font(meta.add_run(f"生成时间：{datetime.now().strftime('%Y-%m-%d %H:%M')}    使用模型：{model_name or '未记录'}"), "微软雅黑", 10)
     doc.add_page_break()
 
     _add_heading(doc, "小说简介")
@@ -131,11 +148,11 @@ def export_project_docx(conn, project_id: int, output: str | Path, model_name: s
 
     _add_heading(doc, "目录")
     for chapter in chapters:
-        doc.add_paragraph(f"第 {chapter['chapter_number']} 章 {chapter['title']}")
+        _set_font(doc.add_paragraph().add_run(f"第 {chapter['chapter_number']} 章  {chapter['title']}"))
     doc.add_page_break()
 
     for chapter in chapters:
-        _add_heading(doc, f"第 {chapter['chapter_number']} 章 {chapter['title']}")
+        _add_heading(doc, f"第 {chapter['chapter_number']} 章  {chapter['title']}")
         _add_body(doc, chapter.get("content") or "")
         if chapter != chapters[-1]:
             doc.add_page_break()

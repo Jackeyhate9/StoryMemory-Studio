@@ -46,6 +46,22 @@ def _style_block(style: dict[str, Any] | None) -> str:
     return _json_block(safe)
 
 
+def _previous_bridge_block(row: dict[str, Any] | None) -> str:
+    if not row:
+        return "- 暂无上一章。本章可以按大纲开局，但仍需快速进入具体场景。"
+    summary = row.get("short_summary") or row.get("detailed_summary") or "暂无摘要"
+    ending = row.get("ending_excerpt") or "暂无结尾摘录"
+    return "\n".join(
+        [
+            f"- 上一章：第 {row.get('chapter_number')} 章《{row.get('title') or '未命名'}》",
+            f"- 上一章摘要：{summary}",
+            f"- 上一章结尾原文：\n{ending}",
+            "- 本章承接要求：开头 300 字内必须回应上一章结尾中的具体物件、动作、声响、来客、消息或未完成对话。",
+            "- 禁止承接方式：不要重新开局，不要只用“与此同时”“几天后”“风波未平”等空泛过渡。",
+        ]
+    )
+
+
 class ContextBuilder:
     def __init__(self, conn: sqlite3.Connection, project: dict[str, Any]):
         self.conn = conn
@@ -59,6 +75,7 @@ class ContextBuilder:
         characters = self.retriever.characters(request.characters)
         locations = self.retriever.locations(request.locations)
         relationships = self.retriever.relationships(request.characters)
+        previous_bridge = self.retriever.previous_chapter_bridge(request.chapter_number)
         recent = self.retriever.recent_chapters(request.chapter_number, 5)
         facts = self.retriever.facts_recent(request.chapter_number, 3)
         world_rules = self.retriever.world_rules()
@@ -66,7 +83,7 @@ class ContextBuilder:
         foreshadows = self.retriever.foreshadows(request.foreshadows or request.plot_threads)
         timeline = self.retriever.timeline(query, 60)
         style = self.retriever.style_profile()
-        chunks = self.retriever.chunks(query, 80)
+        chunks = self.retriever.archive_chunks(query, 30)
 
         sections = [
             (
@@ -121,6 +138,7 @@ class ContextBuilder:
                     ],
                 ),
             ),
+            ("previous_bridge", BASE_WEIGHTS["recent_fact"], _previous_bridge_block(previous_bridge)),
             (
                 "recent_summaries",
                 BASE_WEIGHTS["recent_fact"],
@@ -138,8 +156,8 @@ class ContextBuilder:
         budget = TOKEN_BUDGETS[request.mode]
         selected = {title: content for title, _, content in fit_sections(sections, budget)}
 
-        prompt = CONTEXT_TEMPLATE.format(
-            task_goal="生成或审校长篇小说章节，优先保证设定、人物关系、伏笔、时间线和文风一致。",
+        return CONTEXT_TEMPLATE.format(
+            task_goal="生成或审校长篇小说章节，优先保证设定、人物关系、伏笔、时间线、上一章承接和文风一致。",
             chapter_goal=request.chapter_goal or "未指定",
             chapter_outline=request.chapter_outline or "未指定",
             hard_rules=selected.get("hard_rules", "暂无"),
@@ -147,6 +165,7 @@ class ContextBuilder:
             relationships=selected.get("relationships", "暂无"),
             places_items="\n".join([selected.get("places_items", "暂无"), selected.get("archive", "")]).strip(),
             foreshadows=selected.get("foreshadows", "暂无"),
+            previous_chapter_bridge=selected.get("previous_bridge", "暂无上一章。"),
             recent_summaries=selected.get("recent_summaries", "暂无"),
             facts=selected.get("facts", "暂无"),
             volume_progress=selected.get("volume_progress", "暂无"),
@@ -155,4 +174,3 @@ class ContextBuilder:
             forbidden=selected.get("forbidden", "暂无"),
             output_format="按用户指定模式输出；如生成正文，仅输出正文；如检查一致性，输出 JSON。",
         )
-        return prompt

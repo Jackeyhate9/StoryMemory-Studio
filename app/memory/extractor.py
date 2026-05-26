@@ -10,15 +10,73 @@ from app.llm.client import LLMClient, extract_json, repair_json_with_llm
 PROMPT_PATH = Path(__file__).parents[1] / "prompts" / "extract_memory.md"
 
 
+def _clean_sentence(sentence: str) -> str:
+    return re.sub(r"\s+", " ", sentence).strip(" \t\r\n，。；：、")
+
+
+def _is_fact_sentence(sentence: str) -> bool:
+    text = _clean_sentence(sentence)
+    if len(text) < 6 or len(text) > 180:
+        return False
+    if text.count("“") != text.count("”"):
+        return False
+    if len(re.findall(r"[A-Za-z]", text)) > 8:
+        return False
+    if text.startswith(("”", "，", "。", "、", "；", "：")):
+        return False
+    if text.endswith(("的", "了", "着", "过", "和", "与", "或", "但", "却", "把", "被")):
+        return False
+    weak_fragments = ("声音", "目光", "沉默", "空气", "脸色", "站着", "看着", "没说话")
+    if len(text) < 35 and any(fragment in text for fragment in weak_fragments):
+        return False
+    useful_markers = (
+        "发现",
+        "留下",
+        "取出",
+        "交给",
+        "收下",
+        "拒绝",
+        "答应",
+        "承认",
+        "写着",
+        "刻着",
+        "缺页",
+        "残玉",
+        "印章",
+        "账本",
+        "请帖",
+        "罗公馆",
+        "范允初",
+        "叶含章",
+        "改松岩",
+    )
+    return len(text) >= 45 or any(marker in text for marker in useful_markers)
+
+
 def heuristic_extract(title: str, content: str) -> MemoryExtraction:
     candidates = re.findall(r"[A-Z][a-zA-Z]{1,20}|[\u4e00-\u9fff]{2,4}", content[:4000])
     stop = {
-        "玫瑰", "大厦", "资本", "热搜", "手机", "电梯", "灯光", "玻璃", "宴会", "会议", "项目", "消息",
-        "时候", "声音", "目光", "空气", "沉默", "所有", "一个", "没有", "只是", "自己", "什么", "这里",
+        "大门",
+        "柜台",
+        "账本",
+        "残玉",
+        "请帖",
+        "声音",
+        "目光",
+        "空气",
+        "沉默",
+        "所有",
+        "一个",
+        "没有",
+        "只是",
+        "自己",
+        "什么",
+        "这里",
+        "那里",
     }
-    known_name_pattern = re.compile(r"^[谢林薛王许顾陆沈周陈宋赵何苏傅白][\u4e00-\u9fff]{1,2}$")
+    known_name_pattern = re.compile(r"^[改叶范罗宫周沈林王谢陆陈宋赵何苏傅白][\u4e00-\u9fff]{1,2}$")
     bad_fragments = {"小姐", "以前", "负责", "是谁", "这里", "那里"}
-    bad_suffixes = set("的一是在有和也就很不去过回冷合展说坐停低僵关自总")
+    bad_suffixes = set("的一是在有和也就很不去过回说坐停低关自")
     names = []
     for name in candidates:
         if name in stop:
@@ -30,9 +88,12 @@ def heuristic_extract(title: str, content: str) -> MemoryExtraction:
         if re.match(r"^[A-Z]", name) or known_name_pattern.match(name):
             names.append(name)
     names = sorted(set(names))[:10]
-    sentences = re.split(r"[。！？\n]+", content)
-    facts = [{"fact_text": s.strip(), "fact_type": "chapter_fact"} for s in sentences if 4 <= len(s.strip()) <= 120][:20]
-    summary_text = "；".join([s.strip() for s in sentences if s.strip()][:5])
+
+    sentences = [_clean_sentence(s) for s in re.split(r"[。！？!?；;\n]+", content)]
+    useful_sentences = [s for s in sentences if len(s) >= 12]
+    facts = [{"fact_text": s, "fact_type": "chapter_fact"} for s in sentences if _is_fact_sentence(s)][:12]
+    summary_text = "；".join(useful_sentences[:5])
+    timeline = [{"event_text": facts[0]["fact_text"]}] if facts else []
     return MemoryExtraction(
         summary={
             "short_summary": summary_text[:300] or title,
@@ -43,7 +104,7 @@ def heuristic_extract(title: str, content: str) -> MemoryExtraction:
         },
         characters=[{"name": n, "last_seen_note": "heuristic candidate"} for n in names[:6]],
         facts=facts,
-        timeline_events=[{"event_text": facts[0]["fact_text"]}] if facts else [],
+        timeline_events=timeline,
     )
 
 
