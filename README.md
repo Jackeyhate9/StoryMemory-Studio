@@ -12,6 +12,27 @@ StoryMemory Studio 是一个本地优先的长篇小说与 IP 创作中控台。
 
 ---
 
+## Relationship to OpenHuman / 与 OpenHuman 的关系
+
+StoryMemory Studio is an independent fan-made / derivative exploration inspired by the long-term memory ideas of [OpenHuman](https://github.com/tinyhumansai/openhuman). OpenHuman treats memory as a first-class system component, combining local memory storage, structured memory trees, Markdown-friendly archives, retrieval, and compressed context for AI agents.
+
+StoryMemory Studio does **not** copy OpenHuman code, assets, branding, or product scope. It rethinks a similar “memory-first AI system” philosophy for a narrower creative-writing scenario: long-form fiction, web novels, short drama scripts, comic adaptation, foreshadowing, timeline consistency, character arcs, and chapter-by-chapter generation.
+
+本项目是基于 OpenHuman 长期记忆系统思想所做的独立二创与垂直化改造。OpenHuman 给了我很重要的启发：AI Agent 不应该只依赖临时上下文，而应该拥有可追踪、可编辑、可压缩、可召回的长期记忆系统。
+
+但 StoryMemory Studio 不是 OpenHuman 官方项目、不是其 fork，也不复制 OpenHuman 的代码或产品形态。它把“长期记忆 + 本地数据库 + Markdown/JSON 可编辑记忆 + 上下文压缩召回”的思想，重新设计到 **长篇小说创作** 这个具体领域里：
+
+- OpenHuman 更像通用个人 AI Agent / 生产力记忆系统；
+- StoryMemory Studio 聚焦长篇小说、剧本、漫画和 IP 创作；
+- OpenHuman 的记忆启发是“长期记忆系统思想”；
+- StoryMemory Studio 的落地形态是“SQL Story Memory + Context Builder + 章节生成 + 伏笔/时间线/人物弧光管理”。
+
+Respect and thanks to the OpenHuman project and its contributors for making memory-first AI agent design more visible.
+
+在此向 OpenHuman 项目及其贡献者致敬。没有这类开源记忆系统的启发，StoryMemory Studio 不会这么快形成现在的产品方向。
+
+---
+
 ## Download / 直接下载
 
 Windows release:
