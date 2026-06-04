@@ -14,6 +14,7 @@ from app.creation.preview_store import save_preview
 from app.db.database import db_session, get_project, init_db, log_generation
 from app.db.models import ContextRequest
 from app.export.docx_export import export_project_docx
+from app.generation.chapter import generate_chapter as product_generate_chapter
 from app.llm.client import OllamaClient
 from app.llm.ollama_utils import select_best_ollama_model
 from app.llm.output_cleaner import clean_model_output
@@ -251,6 +252,23 @@ def generate_chapter_text(client: OllamaClient, context: str, title: str, target
         )
         text = f"{text}\n\n{clean_model_output(strip_model_artifacts(more), mode='prose')}"
     return text
+
+
+def generate_chapter_text(client: OllamaClient, context: str, title: str, target_words: int) -> str:
+    """Use the production chapter pipeline for E2E runs.
+
+    Older acceptance smoke code called Ollama directly and could leak model
+    thinking, English drafting notes, or duplicated fragments. Keeping this
+    wrapper aligned with app.generation.chapter makes opencode/CLI smoke tests
+    behave like the Streamlit MVP path.
+    """
+    extra = (
+        f"请创作章节《{title}》，目标长度约 {target_words} 个中文字符。"
+        "只输出中文小说正文，不要输出英文、<think>、提纲、检查项、创作说明或 Markdown。"
+        "必须遵守 Story Memory、上一章桥接、人物关系、伏笔和时间线。"
+        "结尾必须落在具体事件、物件、账页、消息、来客或一句未说完的话上。"
+    )
+    return product_generate_chapter(client, context, mode="generate_chapter", extra_instruction=extra, temperature=0.72)
 
 
 def run_rose_mansion_e2e(
