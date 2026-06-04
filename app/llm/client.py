@@ -63,6 +63,7 @@ class OllamaClient(LLMClient):
         payload = {
             "model": self.model,
             "stream": False,
+            "think": False,
             "options": {"temperature": temperature, "num_ctx": 32768},
             "messages": [
                 {"role": "system", "content": system or "You are a careful writing system assistant."},
