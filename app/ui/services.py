@@ -242,6 +242,7 @@ def health_snapshot() -> dict[str, Any]:
         "env_exists": ENV_PATH.exists(),
         "default_provider": settings.llm_provider,
         "deepseek_configured": bool(settings.deepseek_api_key),
+        "glm_configured": bool(settings.glm_api_key or settings.zai_api_key or settings.bigmodel_api_key),
         "openai_configured": bool(settings.openai_api_key or settings.openai_compatible_api_key),
         "ollama_reachable": ollama_ok,
         "local_first": True,
@@ -253,13 +254,15 @@ def available_provider_options() -> list[str]:
     options = ["auto", "none"]
     if settings.deepseek_api_key:
         options.append("deepseek")
+    if settings.glm_api_key or settings.zai_api_key or settings.bigmodel_api_key:
+        options.append("glm")
     if settings.openai_api_key:
         options.append("openai")
     if settings.openai_compatible_api_key:
         options.append("openai_compatible")
     if health_snapshot()["ollama_reachable"]:
         options.append("ollama")
-    for item in ["deepseek", "openai", "openai_compatible", "ollama"]:
+    for item in ["deepseek", "glm", "openai", "openai_compatible", "ollama"]:
         if item not in options:
             options.append(item)
     return options
@@ -272,6 +275,10 @@ def resolve_auto_provider(provider: str) -> str:
     preferred = settings.llm_provider
     if preferred == "deepseek" and settings.deepseek_api_key:
         return "deepseek"
+    if preferred in {"glm", "zhipu", "zai", "bigmodel"} and (
+        settings.glm_api_key or settings.zai_api_key or settings.bigmodel_api_key
+    ):
+        return "glm"
     if preferred == "openai" and settings.openai_api_key:
         return "openai"
     if preferred == "openai_compatible" and settings.openai_compatible_api_key:
@@ -280,6 +287,8 @@ def resolve_auto_provider(provider: str) -> str:
         return "ollama"
     if settings.deepseek_api_key:
         return "deepseek"
+    if settings.glm_api_key or settings.zai_api_key or settings.bigmodel_api_key:
+        return "glm"
     if settings.openai_compatible_api_key:
         return "openai_compatible"
     if settings.openai_api_key:

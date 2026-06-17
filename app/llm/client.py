@@ -18,11 +18,20 @@ class LLMClient(ABC):
 
 
 class ChatCompletionsClient(LLMClient):
-    def __init__(self, provider: str, base_url: str, api_key: str | None, model: str):
+    def __init__(
+        self,
+        provider: str,
+        base_url: str,
+        api_key: str | None,
+        model: str,
+        *,
+        extra_payload: dict[str, Any] | None = None,
+    ):
         self.provider = provider
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.model = model
+        self.extra_payload = extra_payload or {}
 
     def complete(self, prompt: str, system: str = "", temperature: float = 0.3) -> str:
         if not self.api_key:
@@ -36,6 +45,7 @@ class ChatCompletionsClient(LLMClient):
                 {"role": "user", "content": prompt},
             ],
         }
+        payload.update(self.extra_payload)
         with httpx.Client(timeout=180) as client:
             endpoint = f"{self.base_url}/chat/completions"
             resp = client.post(endpoint, headers=headers, json=payload)
@@ -109,6 +119,16 @@ def get_llm(provider: str | None = None) -> LLMClient:
             settings.openai_compatible_base_url,
             settings.openai_compatible_api_key,
             settings.openai_compatible_model,
+        )
+    if selected in {"glm", "zhipu", "zai", "bigmodel"}:
+        glm_key = settings.glm_api_key or settings.zai_api_key or settings.bigmodel_api_key
+        glm_payload = {"thinking": {"type": "disabled"}} if settings.glm_disable_thinking else {}
+        return ChatCompletionsClient(
+            "glm",
+            settings.glm_base_url,
+            glm_key,
+            settings.glm_model,
+            extra_payload=glm_payload,
         )
     if selected == "ollama":
         return OllamaClient(settings.ollama_base_url, settings.ollama_model)

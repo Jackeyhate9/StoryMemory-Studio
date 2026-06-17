@@ -19,6 +19,13 @@ class Settings(BaseSettings):
     openai_compatible_api_key: str | None = Field(default=None, alias="OPENAI_COMPATIBLE_API_KEY")
     openai_compatible_base_url: str = Field(default="https://api.openai.com/v1", alias="OPENAI_COMPATIBLE_BASE_URL")
     openai_compatible_model: str = Field(default="gpt-4o-mini", alias="OPENAI_COMPATIBLE_MODEL")
+    glm_api_key: str | None = Field(default=None, alias="GLM_API_KEY")
+    zai_api_key: str | None = Field(default=None, alias="ZAI_API_KEY")
+    bigmodel_api_key: str | None = Field(default=None, alias="BIGMODEL_API_KEY")
+    glm_base_url: str = Field(default="https://open.bigmodel.cn/api/paas/v4", alias="GLM_BASE_URL")
+    glm_coding_base_url: str = Field(default="https://open.bigmodel.cn/api/coding/paas/v4", alias="GLM_CODING_BASE_URL")
+    glm_model: str = Field(default="glm-5.2", alias="GLM_MODEL")
+    glm_disable_thinking: bool = Field(default=True, alias="GLM_DISABLE_THINKING")
     ollama_base_url: str = Field(default="http://127.0.0.1:11434", alias="OLLAMA_BASE_URL")
     ollama_model: str = Field(default="auto", alias="DEFAULT_OLLAMA_MODEL")
 

@@ -25,6 +25,7 @@ provider = st.selectbox(
         "auto": "自动识别",
         "none": "本地启发式，不调用模型",
         "deepseek": "DeepSeek",
+        "glm": "智谱 GLM / Z.ai",
         "openai": "OpenAI",
         "openai_compatible": "OpenAI 兼容服务",
         "ollama": "Ollama 本地模型",

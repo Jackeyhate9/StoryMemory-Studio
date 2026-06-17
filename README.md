@@ -208,7 +208,7 @@ StoryMemory Studio improves long-context hit rate by:
   Builds structured prompts using S/A/B/C/D priority layers instead of dumping raw text.
 
 - **LLM Providers / 模型接入**  
-  Supports DeepSeek, OpenAI-compatible APIs, OpenAI, and local Ollama models. Default release behavior prefers Ollama when available.
+  Supports DeepSeek, Zhipu GLM / Z.ai GLM-5.2, OpenAI-compatible APIs, OpenAI, and local Ollama models. Default release behavior prefers Ollama when available.
 
 - **Style Profiler / 文风学习器**  
   Extracts abstract style profiles from pasted or uploaded samples. It does not copy protected text, unique metaphors, character names, or story events.
@@ -244,7 +244,7 @@ StoryMemory Studio 的技术选型优先考虑：本地可运行、数据可控�
 | ORM / SQL | SQLAlchemy + sqlite3 | Stable database access and schema initialization |
 | Data validation | Pydantic | Validate LLM JSON outputs before writing memory |
 | CLI | Typer + Rich | Developer and power-user command line workflows |
-| LLM calls | httpx | DeepSeek, OpenAI-compatible, OpenAI, and Ollama HTTP APIs |
+| LLM calls | httpx | DeepSeek, GLM / Z.ai, OpenAI-compatible, OpenAI, and Ollama HTTP APIs |
 | Local models | Ollama | Offline/private local generation path |
 | Long-context orchestration | Context Builder | S/A/B/C/D priority prompt assembly for DeepSeek-style long context |
 | Export | python-docx | Export chapters and full projects as docx |
@@ -258,7 +258,7 @@ StoryMemory Studio 的技术选型优先考虑：本地可运行、数据可控�
 | 数据访问 | SQLAlchemy + sqlite3 | 初始化数据库和读写 Story Memory |
 | 结构化校验 | Pydantic | 校验 LLM 输出 JSON，避免脏数据入库 |
 | 命令行 | Typer + Rich | 给高级用户和自动化测试使用 |
-| 模型请求 | httpx | 接入 DeepSeek、OpenAI-compatible、OpenAI、Ollama |
+| 模型请求 | httpx | 接入 DeepSeek、智谱 GLM / Z.ai、OpenAI-compatible、OpenAI、Ollama |
 | 本地模型 | Ollama | 支持离线/私有化生成 |
 | 长上下文编排 | Context Builder | 按 S/A/B/C/D 优先级适配 DeepSeek 百万 token 长上下文 |
 | 文档导出 | python-docx | 导出 docx 小说正文和设定包 |
@@ -403,6 +403,10 @@ DEFAULT_MODEL_PROVIDER=ollama
 DEFAULT_OLLAMA_MODEL=auto
 DEEPSEEK_API_KEY=
 DEEPSEEK_BASE_URL=https://api.deepseek.com
+GLM_API_KEY=
+GLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+GLM_MODEL=glm-5.2
+GLM_DISABLE_THINKING=true
 OPENAI_COMPATIBLE_API_KEY=
 OPENAI_COMPATIBLE_BASE_URL=
 STORYMEMORY_DATA_DIR=./data
@@ -417,7 +421,39 @@ ollama pull qwen2.5
 ollama pull deepseek-r1
 ```
 
-If Ollama is unavailable, configure DeepSeek or an OpenAI-compatible endpoint in the settings page.
+If Ollama is unavailable, configure DeepSeek, GLM-5.2, or an OpenAI-compatible endpoint in the settings page.
+
+### GLM-5.2 / 智谱 GLM / Z.ai
+
+StoryMemory Studio includes a dedicated `glm` provider for Zhipu GLM / Z.ai. It uses the official OpenAI-compatible Chat Completions interface.
+
+StoryMemory Studio 已内置 `glm` 提供方，可直接接入智谱 GLM / Z.ai 的 OpenAI-compatible 接口：
+
+```env
+DEFAULT_MODEL_PROVIDER=glm
+GLM_API_KEY=your-key
+GLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4
+GLM_MODEL=glm-5.2
+GLM_DISABLE_THINKING=true
+```
+
+CLI connection test:
+
+```powershell
+python -m app.cli test-llm --provider glm
+```
+
+Notes:
+
+- The general creative-writing endpoint is `https://open.bigmodel.cn/api/paas/v4`.
+- The Coding Plan endpoint is `https://open.bigmodel.cn/api/coding/paas/v4`; use it only when your account/plan requires that route.
+- `GLM_DISABLE_THINKING=true` is recommended for fiction generation to prevent reasoning traces from leaking into prose.
+
+说明：
+
+- 通用创作默认使用 `https://open.bigmodel.cn/api/paas/v4`。
+- Coding Plan 端点为 `https://open.bigmodel.cn/api/coding/paas/v4`，仅在你的账号套餐要求时使用。
+- 小说生成建议保持 `GLM_DISABLE_THINKING=true`，避免思考内容混入正文。
 
 ---
 

@@ -246,7 +246,7 @@ def _render_tech_stack() -> None:
     tech_items = [
         ("本地数据", "SQLite + SQLAlchemy，项目数据默认保存在本机 data/ 目录。"),
         ("长上下文编排", "Context Builder 按 S/A/B/C/D 优先级组织 DeepSeek 百万 token 级上下文。"),
-        ("模型接入", "支持 DeepSeek、OpenAI-compatible、OpenAI 与 Ollama 本地模型。"),
+        ("模型接入", "支持 DeepSeek、智谱 GLM / Z.ai、OpenAI-compatible、OpenAI 与 Ollama 本地模型。"),
         ("前端界面", "Streamlit 本地 Web UI，可通过 PyInstaller 打包为 Windows exe。"),
         ("结构化校验", "Pydantic 校验 LLM JSON 输出，并带有 JSON 修复机制。"),
         ("导出能力", "python-docx 导出 docx，支持 md、txt、json 等文本资产。"),

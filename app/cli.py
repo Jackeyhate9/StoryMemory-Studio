@@ -107,7 +107,7 @@ def import_chapter(
     number: int = typer.Option(..., help="章节序号"),
     title: str = typer.Option("", help="章节标题，默认取文件名"),
     volume: str = typer.Option("", help="卷名"),
-    provider: str = typer.Option("none", help="deepseek/openai/openai_compatible/ollama/none"),
+    provider: str = typer.Option("none", help="deepseek/glm/openai/openai_compatible/ollama/none"),
 ):
     """导入章节，并自动抽取 summary、facts、人物、伏笔、时间线。"""
     init_db()
@@ -309,7 +309,7 @@ def export_memory(project: str, output: Path, format: str = typer.Option("json",
 
 @app.command("test-llm")
 def test_llm(
-    provider: str = typer.Option("deepseek", help="deepseek/openai/openai_compatible/ollama"),
+    provider: str = typer.Option("deepseek", help="deepseek/glm/openai/openai_compatible/ollama"),
     no_completion: bool = typer.Option(False, help="Only check model listing endpoint"),
 ):
     """Validate configured LLM provider, model listing, selected model, and chat completion."""
@@ -354,7 +354,7 @@ def create_novel(
     target_reader: str = typer.Option(""),
     word_count: int = typer.Option(0),
     output_project: str = typer.Option(""),
-    provider: str = typer.Option("none", help="none/deepseek/openai/openai_compatible/ollama"),
+    provider: str = typer.Option("none", help="none/deepseek/glm/openai/openai_compatible/ollama"),
     yes: bool = typer.Option(False, help="Commit without asking"),
 ):
     """Create a new novel from zero, save preview, and optionally commit it into Story Memory."""
@@ -475,7 +475,7 @@ def analyze_style_cmd(
     target_usage: str = typer.Option("novel_chapter"),
     save_source: str = typer.Option("false", help="true/false"),
     set_default: str = typer.Option("false", help="true/false"),
-    provider: str = typer.Option("none", help="none/deepseek/openai/openai_compatible/ollama"),
+    provider: str = typer.Option("none", help="none/deepseek/glm/openai/openai_compatible/ollama"),
 ):
     """Analyze sample writing into an abstract style profile and save it to project."""
     save_source_bool = _truthy(save_source)
@@ -506,7 +506,7 @@ def apply_style_cmd(
     style_profile_id: int = typer.Option(..., help="Style profile id"),
     input_file: Path = typer.Option(..., help="Input text file"),
     output_file: Path = typer.Option(..., help="Output text file"),
-    provider: str = typer.Option("none", help="none/deepseek/openai/openai_compatible/ollama"),
+    provider: str = typer.Option("none", help="none/deepseek/glm/openai/openai_compatible/ollama"),
 ):
     """Rewrite text with abstract style rules, never by copying the source sample."""
     profile = get_style_profile_by_id(style_profile_id)
