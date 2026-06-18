@@ -1,0 +1,61 @@
+name: Bug report
+description: Report a reproducible problem in StoryMemory Studio.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve StoryMemory Studio.
+        请不要上传 API Key、完整私稿、完整样章或本地数据库。
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+      placeholder: The app failed to...
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Windows exe / launcher
+        - Streamlit UI
+        - CLI
+        - Model provider
+        - Story Memory / database
+        - Context Builder
+        - Chapter generation
+        - AI tone / novelization
+        - Export / docx
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model provider and model
+      placeholder: Ollama qwen3.6-35b-ts / DeepSeek / GLM-5.2 / OpenAI-compatible
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open...
+        2. Click...
+        3. See error...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Paste sanitized logs or attach screenshots.
+      render: text
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: v1.0.0 / main commit SHA

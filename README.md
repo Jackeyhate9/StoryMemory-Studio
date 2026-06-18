@@ -2,6 +2,12 @@
 
 **中文名：长篇记忆小说**
 
+[![GitHub stars](https://img.shields.io/github/stars/Jackeyhate9/StoryMemory-Studio?style=social)](https://github.com/Jackeyhate9/StoryMemory-Studio/stargazers)
+[![Release](https://img.shields.io/github/v/release/Jackeyhate9/StoryMemory-Studio?label=release)](https://github.com/Jackeyhate9/StoryMemory-Studio/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Windows exe](https://img.shields.io/badge/Windows-exe_download-2563eb)](https://github.com/Jackeyhate9/StoryMemory-Studio/releases/download/v1.0.0/StoryMemoryStudio.exe)
+[![Homepage](https://img.shields.io/badge/Homepage-GitHub_Pages-8b5cf6)](https://jackeyhate9.github.io/StoryMemory-Studio/)
+
 StoryMemory Studio is a local-first AI writing control center for long-form fiction and IP development. It combines a structured SQLite story memory database, long-context prompt orchestration, chapter generation, consistency checks, foreshadowing management, style profiling, AI-tone cleanup, novelization rewriting, and multi-format IP adaptation.
 
 StoryMemory Studio 是一个本地优先的长篇小说与 IP 创作中控台。它不是“一键写小说”的玩具，而是把 **SQL 结构化记忆库、DeepSeek 百万 token 长上下文编排、章节生成、穿帮检测、伏笔管理、时间线管理、文风学习、AI 腔治理、小说化重写、IP 改编** 放进同一个可运行桌面工具里。

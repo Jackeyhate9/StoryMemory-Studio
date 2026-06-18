@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest an improvement for long-form writing, memory, models, or UI.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What writing or workflow problem should this solve?
+      placeholder: When writing a long novel, I need...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should StoryMemory Studio do?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Create Novel Wizard
+        - Story Memory
+        - Context Builder
+        - Model provider
+        - Style Profiler
+        - AI tone / novelization
+        - Consistency checking
+        - IP adaptation
+        - Windows packaging
+        - Documentation
+        - Other
+  - type: textarea
+    id: context
+    attributes:
+      label: Extra context
+      description: Screenshots, workflow notes, model behavior, or examples.
